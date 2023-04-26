@@ -26,21 +26,36 @@ class GameLogic:
         board = GameLogic.BOARD
         result = np.zeros((self.size, self.size))
         r_index = 0
-        for row_index, row_value in enumerate(board):
+        for row_value in board:
             c_index = 0
-            for col_index, col_value in enumerate(row_value):
+            for col_value in row_value:
                 if col_value != 0:
                     result[(r_index, c_index)] = col_value
                     c_index += 1
-                    board[(row_index, col_index)] = 0
             r_index += 1
         GameLogic.BOARD = result
 
     def add_tiles(self):
-        pass
+        board = GameLogic.BOARD
+        for row_index in range(self.size):
+            for col_index in range(self.size - 1):
+                if board[(row_index, col_index + 1)] == board[(row_index, col_index)]:
+                    board[(row_index, col_index)] += board[(row_index, col_index + 1)]
+                    board[(row_index, col_index + 1)] = 0
+        self.shift_tiles_left()
 
+    def insert_tile(self):
+        board = GameLogic.BOARD
+        if np.any(board == 0):
+            random_tile = np.random.choice(self.TILE_DISTRIBUTION, 1)
+            random_row_col = np.random.randint(self.size, size=2)
+            board[random_row_col[0], random_row_col[1]] = random_tile[0]
+
+    def move_left(self):
+        self.shift_tiles_left()
+        self.add_tiles()
+        self.insert_tile()
+        self.printBoard()
 
 gl = GameLogic()
-gl.printBoard()
-gl.shift_tiles_left()
 gl.printBoard()
