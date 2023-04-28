@@ -1,27 +1,27 @@
-import numpy as np
 from tabulate import tabulate
+import numpy as np
 
 class GameLogic:
 
     TILE_DISTRIBUTION = np.array([2, 2, 2, 2, 2, 2, 4, 4])
 
     def __init__(self, size=4):
-        self.size = size
-        GameLogic.BOARD = np.zeros((self.size, self.size))
-        self.initialize_board()
+        self._size = size
+        self._board = np.zeros((self._size, self._size))
+        self._initialize_board()
 
-    def initialize_board(self):
+    def _initialize_board(self):
         starting_tiles = np.random.choice(GameLogic.TILE_DISTRIBUTION, 2)
-        starting_row_col = np.random.randint(self.size, size=(2, 2))
-        GameLogic.BOARD[starting_row_col[0], starting_row_col[1]] = starting_tiles
+        starting_row_col = np.random.randint(self._size, size=(2, 2))
+        self._board[starting_row_col[0], starting_row_col[1]] = starting_tiles
 
-    def printBoard(self):
-        table = tabulate(GameLogic.BOARD, tablefmt="fancy_grid")
+    def print_board(self):
+        table = tabulate(self._board, tablefmt="fancy_grid")
         print(table)
 
-    def shift_tiles_left(self):
-        board = GameLogic.BOARD
-        result = np.zeros((self.size, self.size))
+    def _shift_tiles_left(self):
+        board = self._board
+        result = np.zeros((self._size, self._size))
         r_index = 0
         for row_value in board:
             c_index = 0
@@ -30,54 +30,44 @@ class GameLogic:
                     result[(r_index, c_index)] = col_value
                     c_index += 1
             r_index += 1
-        GameLogic.BOARD = result
+        self._board = result
 
-    def add_tiles(self):
-        board = GameLogic.BOARD
-        for row_index in range(self.size):
-            for col_index in range(self.size - 1):
+    def _add_tiles(self):
+        board = self._board
+        for row_index in range(self._size):
+            for col_index in range(self._size - 1):
                 if board[(row_index, col_index + 1)] == board[(row_index, col_index)]:
                     board[(row_index, col_index)] += board[(row_index, col_index + 1)]
                     board[(row_index, col_index + 1)] = 0
-        self.shift_tiles_left()
+        self._shift_tiles_left()
 
-    def insert_tile(self):
-        board = GameLogic.BOARD
+    def _insert_tile(self):
+        board = self._board
         if np.any(board == 0):
-            random_tile = np.random.choice(self.TILE_DISTRIBUTION, 1)
+            random_tile = np.random.choice(GameLogic.TILE_DISTRIBUTION, 1)
             index_of_zeros = np.argwhere(board == 0)
             random_row_col = index_of_zeros[np.random.randint(len(index_of_zeros))]
             board[random_row_col[0], random_row_col[1]] = random_tile[0]
 
     def move_left(self):
-        self.shift_tiles_left()
-        self.add_tiles()
-        self.insert_tile()
-        self.printBoard()
+        self._shift_tiles_left()
+        self._add_tiles()
+        self._insert_tile()
 
     def move_right(self):
-        GameLogic.BOARD = np.fliplr(GameLogic.BOARD)
-        self.shift_tiles_left()
-        self.add_tiles()
-        self.insert_tile()
-        GameLogic.BOARD = np.fliplr(GameLogic.BOARD)
-        self.printBoard()
+        self._board = np.fliplr(self._board)
+        self.move_left()
+        self._board = np.fliplr(self._board)
 
     def move_up(self):
-        GameLogic.BOARD = np.rot90(GameLogic.BOARD, 1)
-        self.shift_tiles_left()
-        self.add_tiles()
-        self.insert_tile()
-        GameLogic.BOARD = np.rot90(GameLogic.BOARD, -1)
-        self.printBoard()
+        self._board = np.rot90(self._board, 1)
+        self.move_left()
+        self._board = np.rot90(self._board, -1)
 
     def move_down(self):
-        GameLogic.BOARD = np.rot90(GameLogic.BOARD, -1)
-        self.shift_tiles_left()
-        self.add_tiles()
-        self.insert_tile()
-        GameLogic.BOARD = np.rot90(GameLogic.BOARD, 1)
-        self.printBoard()
+        self._board = np.rot90(self._board, -1)
+        self.move_left()
+        self._board = np.rot90(self._board, 1)
 
 gl = GameLogic()
-gl.printBoard()
+gl.print_board()
