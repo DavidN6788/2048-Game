@@ -11,11 +11,8 @@ class GameLogic:
         self.initialize_board()
 
     def initialize_board(self):
-        # Generate two random tiles to start on the board
         starting_tiles = np.random.choice(GameLogic.TILE_DISTRIBUTION, 2)
-        # Generate two random positions to place the starting tiles
         starting_row_col = np.random.randint(self.size, size=(2, 2))
-        # Add the random tiles to the random positions
         GameLogic.BOARD[starting_row_col[0], starting_row_col[1]] = starting_tiles
 
     def printBoard(self):
@@ -48,13 +45,38 @@ class GameLogic:
         board = GameLogic.BOARD
         if np.any(board == 0):
             random_tile = np.random.choice(self.TILE_DISTRIBUTION, 1)
-            random_row_col = np.random.randint(self.size, size=2)
+            index_of_zeros = np.argwhere(board == 0)
+            random_row_col = index_of_zeros[np.random.randint(len(index_of_zeros))]
             board[random_row_col[0], random_row_col[1]] = random_tile[0]
 
     def move_left(self):
         self.shift_tiles_left()
         self.add_tiles()
         self.insert_tile()
+        self.printBoard()
+
+    def move_right(self):
+        GameLogic.BOARD = np.fliplr(GameLogic.BOARD)
+        self.shift_tiles_left()
+        self.add_tiles()
+        self.insert_tile()
+        GameLogic.BOARD = np.fliplr(GameLogic.BOARD)
+        self.printBoard()
+
+    def move_up(self):
+        GameLogic.BOARD = np.rot90(GameLogic.BOARD, 1)
+        self.shift_tiles_left()
+        self.add_tiles()
+        self.insert_tile()
+        GameLogic.BOARD = np.rot90(GameLogic.BOARD, -1)
+        self.printBoard()
+
+    def move_down(self):
+        GameLogic.BOARD = np.rot90(GameLogic.BOARD, -1)
+        self.shift_tiles_left()
+        self.add_tiles()
+        self.insert_tile()
+        GameLogic.BOARD = np.rot90(GameLogic.BOARD, 1)
         self.printBoard()
 
 gl = GameLogic()
