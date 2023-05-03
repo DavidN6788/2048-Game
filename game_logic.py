@@ -106,6 +106,3 @@ class GameLogic:
     def _game_won(self):
         winning_tile = math.pow(2, self._size + 7)
         return True if np.any(self._board == winning_tile) else False
-
-gl = GameLogic()
-gl.board
