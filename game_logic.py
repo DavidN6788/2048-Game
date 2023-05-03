@@ -12,6 +12,14 @@ class GameLogic:
         self._initialize_board()
         # self._board = np.array([[2, 4, 8, 16], [4, 8, 16, 32], [8, 16, 32, 64], [16, 32, 64, 128]])
 
+    @property
+    def size(self):
+        return self._size
+
+    @property
+    def board(self):
+        return self._board
+
     def _initialize_board(self):
         starting_tiles = np.random.choice(GameLogic.TILE_DISTRIBUTION, 2)
         starting_row_col = np.random.randint(self._size, size=(2, 2))
